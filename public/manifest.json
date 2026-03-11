@@ -1,0 +1,30 @@
+{
+  "name": "AGROIT - Italian Agricultural Equipment in Georgia",
+  "short_name": "AGROIT",
+  "description": "Professional Italian agricultural machinery for vineyards, orchards, and dry fruit processing in Georgia",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#16a34a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "shopping"],
+  "lang": "ka",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false
+}
+

@@ -1,0 +1,36 @@
+import * as React from "react";
+import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+import { Check } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+export interface CheckboxProps extends React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> {
+  label?: React.ReactNode;
+  description?: React.ReactNode;
+}
+
+export const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root>, CheckboxProps>(
+  ({ className, label, description, ...props }, ref) => (
+    <div className={cn("flex items-start gap-3", label ? "" : "inline-flex")}>
+      <CheckboxPrimitive.Root
+        ref={ref}
+        className={cn(
+          "peer h-5 w-5 shrink-0 rounded-md border border-input ring-offset-background transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
+          className,
+        )}
+        {...props}
+      >
+        <CheckboxPrimitive.Indicator className="flex items-center justify-center text-current">
+          <Check className="h-3.5 w-3.5" />
+        </CheckboxPrimitive.Indicator>
+      </CheckboxPrimitive.Root>
+      {(label || description) && (
+        <label className="space-y-1 text-sm leading-tight text-foreground">
+          {label ? <span className="font-medium">{label}</span> : null}
+          {description ? <p className="text-xs text-muted-foreground">{description}</p> : null}
+        </label>
+      )}
+    </div>
+  ),
+);
+Checkbox.displayName = CheckboxPrimitive.Root.displayName;

@@ -1,0 +1,54 @@
+Optimize all images in this project to SEO-friendly WebP format. Follow these steps:
+
+**Step 1: Check ImageMagick**
+- Verify ImageMagick is installed by running `magick -version`
+- If not installed, inform me to install it first
+
+**Step 2: Convert Images to WebP**
+- Find all JPG, JPEG, and PNG files in:
+  - `src/assets/` (and all subdirectories)
+  - `public/` (excluding favicon files)
+- Convert each to WebP using ImageMagick with these settings:
+  - Quality: 85%
+  - Strip all metadata
+  - Max dimension: 2000px for regular images
+  - Max dimension: 800px for logos and supplier images
+  - Use webp:method=6 for best compression
+  - Use lossless=false for smaller files
+- Command format: `magick input.jpg -strip -quality 85 -define webp:method=6 -define webp:lossless=false -resize '2000x2000>' output.webp`
+
+**Step 3: Update All Code References**
+- Search and replace in all source files (.tsx, .ts, .jsx, .js, .css, .scss):
+  - `.jpg` → `.webp`
+  - `.jpeg` → `.webp`
+  - `.png` → `.webp` (exclude favicon.png)
+- Update:
+  - Import statements: `import logo from "@/assets/logo.png"` → `import logo from "@/assets/logo.webp"`
+  - URL references: `url('image.jpg')` → `url('image.webp')`
+  - Schema markup URLs: `https://domain.com/image.png` → `https://domain.com/image.webp`
+  - Any hardcoded image paths
+
+**Step 4: Delete Original Files**
+- Remove all original JPG, JPEG, PNG files from `src/assets/` and subdirectories
+- Keep favicon files
+- Only delete if corresponding .webp file exists
+
+**Step 5: Verify and Report**
+- Count WebP files created
+- Check that no broken imports remain
+- Report file size savings
+
+**Requirements:**
+- Show progress for each conversion
+- Display file size comparison (before → after)
+- Report total files converted, skipped, and any failures
+- Don't add try/catch or defensive checks
+- Don't use dynamic imports
+- Follow minimal-change rule (only modify necessary lines)
+
+**Final Report Should Include:**
+- Number of images converted
+- Total file size saved
+- Number of code files updated
+- List of any files that failed to convert
+
