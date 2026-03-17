@@ -93,6 +93,9 @@ export function generatePageMetadata({
     description: optimizedDescription,
     keywords: keywords,
     authors: [{ name: "AGROIT" }],
+    verification: {
+      google: "BjtK5MQIj7K6hsU6sr6E632R9IC5j5Z2sY60HF6tBMY",
+    },
     icons: {
       icon: [
         { url: "/favicon.ico", sizes: "32x32" },

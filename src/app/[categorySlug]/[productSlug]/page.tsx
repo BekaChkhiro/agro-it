@@ -7,6 +7,7 @@ import { generateProductSchema, generateBreadcrumbSchema, generateOrganizationSc
 import { getDomainLanguage } from "@/utils/config";
 import type { Language } from "@/lib/data/types";
 import ProductContent from "./ProductContent";
+import JsonLd from "@/components/JsonLd";
 
 // ISR: Revalidate every hour
 export const revalidate = 3600;
@@ -114,11 +115,33 @@ export default async function Page({ params }: Props) {
     relatedProducts = await getProductsByCategory(product.category_ids);
   }
 
+  // Generate Schema.org JSON-LD for the page
+  const categoryPath = product.category?.slug_en ? `/${product.category.slug_en}` : "";
+  const productSchema = generateProductSchema(product, language, categoryPath);
+  const breadcrumbItems = [
+    { name: language === "en" ? "Home" : "მთავარი", url: language === "en" ? "/en" : "/" },
+  ];
+  if (product.category) {
+    breadcrumbItems.push({
+      name: language === "en" ? product.category.name_en : product.category.name_ka,
+      url: language === "en" ? `/en/${product.category.slug_en}` : `/${product.category.slug_ka || product.category.slug_en}`,
+    });
+  }
+  breadcrumbItems.push({
+    name: language === "en" ? product.name_en : product.name_ka,
+    url: `${categoryPath}/${product.slug_en}`,
+  });
+  const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems, language);
+  const organizationSchema = generateOrganizationSchema(language);
+
   return (
-    <ProductContent
-      product={product}
-      relatedProducts={relatedProducts}
-      language={language}
-    />
+    <>
+      <JsonLd data={[productSchema, breadcrumbSchema, organizationSchema]} />
+      <ProductContent
+        product={product}
+        relatedProducts={relatedProducts}
+        language={language}
+      />
+    </>
   );
 }

@@ -15,6 +15,18 @@ export function middleware(request: NextRequest) {
   const host = request.headers.get("host") || "";
   const domainLang = DOMAIN_LANG_MAP[host] || "ka";
 
+  // Normalize URLs to lowercase (redirect uppercase to lowercase)
+  // Skip static routes like /en, /about, /contact, /blog, /products, /admin, /auth
+  const staticRoutes = ['/en', '/about', '/contact', '/blog', '/products', '/admin', '/auth', '/success-stories', '/success-story'];
+  const isStaticRoute = staticRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
+
+  if (!isStaticRoute && pathname !== pathname.toLowerCase()) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = pathname.toLowerCase();
+    redirectUrl.search = search;
+    return NextResponse.redirect(redirectUrl, 301);
+  }
+
   // Redirect /ru/* to /en/*
   if (pathname === RU_PREFIX || pathname.startsWith(`${RU_PREFIX}/`)) {
     const strippedPath = pathname.replace(/^\/ru/, "");

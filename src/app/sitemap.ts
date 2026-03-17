@@ -10,8 +10,13 @@ import { getPublishedBlogs } from "@/lib/data/blogs";
 import { getPublishedSuccessStories } from "@/lib/data/success-stories";
 import { generateSlug } from "@/utils/urlHelpers";
 
-const BASE_URL_GE = "https://agroit.ge";
-const BASE_URL_AM = "https://agroit.am";
+const BASE_URL_GE = "https://www.agroit.ge";
+
+// Helper to normalize slugs (lowercase, replace spaces with hyphens)
+function normalizeSlug(slug: string | null | undefined): string | null {
+  if (!slug) return null;
+  return slug.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Fetch all data in parallel
@@ -104,99 +109,102 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Armenian domain static pages
-  const staticPagesHy: MetadataRoute.Sitemap = [
-    {
-      url: BASE_URL_AM,
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 1,
-    },
-    {
-      url: `${BASE_URL_AM}/products`,
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
-      url: `${BASE_URL_AM}/about`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL_AM}/contact`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-  ];
+  // Note: Armenian domain (agroit.am) has its own sitemap
 
-  // Dynamic category pages
+  // Dynamic category pages (normalized to lowercase)
   const categoryPagesKa: MetadataRoute.Sitemap = categories
     .filter((cat) => cat.slug_ka || cat.slug_en)
-    .map((category) => ({
-      url: `${BASE_URL_GE}/${category.slug_ka || category.slug_en}`,
-      lastModified: category.updated_at ? new Date(category.updated_at) : now,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    }));
+    .map((category) => {
+      const slug = normalizeSlug(category.slug_ka) || normalizeSlug(category.slug_en);
+      if (!slug) return null;
+      return {
+        url: `${BASE_URL_GE}/${slug}`,
+        lastModified: category.updated_at ? new Date(category.updated_at) : now,
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null);
 
   const categoryPagesEn: MetadataRoute.Sitemap = categories
     .filter((cat) => cat.slug_en)
-    .map((category) => ({
-      url: `${BASE_URL_GE}/en/${category.slug_en}`,
-      lastModified: category.updated_at ? new Date(category.updated_at) : now,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    }));
+    .map((category) => {
+      const slug = normalizeSlug(category.slug_en);
+      if (!slug) return null;
+      return {
+        url: `${BASE_URL_GE}/en/${slug}`,
+        lastModified: category.updated_at ? new Date(category.updated_at) : now,
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null);
 
-  // Dynamic product pages
+  // Dynamic product pages (normalized to lowercase)
   const productPagesKa: MetadataRoute.Sitemap = products
     .filter((product) => product.slug_en && product.category?.slug_en)
     .map((product) => {
-      const categorySlug = product.category?.slug_ka || product.category?.slug_en;
+      const categorySlug = normalizeSlug(product.category?.slug_ka) || normalizeSlug(product.category?.slug_en);
+      const productSlug = normalizeSlug(product.slug_ka) || normalizeSlug(product.slug_en);
+      if (!categorySlug || !productSlug) return null;
       return {
-        url: `${BASE_URL_GE}/${categorySlug}/${product.slug_ka || product.slug_en}`,
+        url: `${BASE_URL_GE}/${categorySlug}/${productSlug}`,
         lastModified: product.updated_at ? new Date(product.updated_at) : now,
         changeFrequency: "weekly" as const,
         priority: 0.7,
       };
-    });
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null);
 
   const productPagesEn: MetadataRoute.Sitemap = products
     .filter((product) => product.slug_en && product.category?.slug_en)
-    .map((product) => ({
-      url: `${BASE_URL_GE}/en/${product.category!.slug_en}/${product.slug_en}`,
-      lastModified: product.updated_at ? new Date(product.updated_at) : now,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    }));
+    .map((product) => {
+      const categorySlug = normalizeSlug(product.category!.slug_en);
+      const productSlug = normalizeSlug(product.slug_en);
+      if (!categorySlug || !productSlug) return null;
+      return {
+        url: `${BASE_URL_GE}/en/${categorySlug}/${productSlug}`,
+        lastModified: product.updated_at ? new Date(product.updated_at) : now,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null);
 
-  // Dynamic blog pages
+  // Dynamic blog pages (normalized to lowercase)
   const blogPagesKa: MetadataRoute.Sitemap = blogs
     .filter((blog) => blog.slug_ka || blog.slug_en)
-    .map((blog) => ({
-      url: `${BASE_URL_GE}/blog/${blog.slug_ka || blog.slug_en}`,
-      lastModified: blog.updated_at ? new Date(blog.updated_at) : now,
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    }));
+    .map((blog) => {
+      const slug = normalizeSlug(blog.slug_ka) || normalizeSlug(blog.slug_en);
+      if (!slug) return null;
+      return {
+        url: `${BASE_URL_GE}/blog/${slug}`,
+        lastModified: blog.updated_at ? new Date(blog.updated_at) : now,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null);
 
   const blogPagesEn: MetadataRoute.Sitemap = blogs
     .filter((blog) => blog.slug_en)
-    .map((blog) => ({
-      url: `${BASE_URL_GE}/en/blog/${blog.slug_en}`,
-      lastModified: blog.updated_at ? new Date(blog.updated_at) : now,
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    }));
+    .map((blog) => {
+      const slug = normalizeSlug(blog.slug_en);
+      if (!slug) return null;
+      return {
+        url: `${BASE_URL_GE}/en/blog/${slug}`,
+        lastModified: blog.updated_at ? new Date(blog.updated_at) : now,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null);
 
-  // Dynamic success story pages
+  // Dynamic success story pages (normalized to lowercase)
   const successStoryPagesKa: MetadataRoute.Sitemap = successStories
     .filter((story) => story.slug_ka || story.slug_en || story.title_en)
     .map((story) => {
-      const slug = story.slug_ka || story.slug_en || (story.title_en ? generateSlug(story.title_en, false) : null);
+      const slug = normalizeSlug(story.slug_ka) || normalizeSlug(story.slug_en) || (story.title_en ? normalizeSlug(generateSlug(story.title_en, false)) : null);
       if (!slug) return null;
       return {
         url: `${BASE_URL_GE}/success-story/${slug}`,
@@ -210,7 +218,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const successStoryPagesEn: MetadataRoute.Sitemap = successStories
     .filter((story) => story.slug_en || story.title_en)
     .map((story) => {
-      const slug = story.slug_en || (story.title_en ? generateSlug(story.title_en, false) : null);
+      const slug = normalizeSlug(story.slug_en) || (story.title_en ? normalizeSlug(generateSlug(story.title_en, false)) : null);
       if (!slug) return null;
       return {
         url: `${BASE_URL_GE}/en/success-story/${slug}`,
@@ -224,7 +232,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...staticPagesKa,
     ...staticPagesEn,
-    ...staticPagesHy,
     ...categoryPagesKa,
     ...categoryPagesEn,
     ...productPagesKa,

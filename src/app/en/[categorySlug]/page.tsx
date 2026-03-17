@@ -3,9 +3,10 @@ import { notFound } from "next/navigation";
 import { getCategoryBySlug, getSubcategories } from "@/lib/data/categories";
 import { getProductsByCategory } from "@/lib/data/products";
 import { generatePageMetadata } from "@/lib/metadata";
-import { generateBreadcrumbSchema, generateOrganizationSchema } from "@/lib/schema";
+import { generateBreadcrumbSchema, generateOrganizationSchema, generateProductListSchema } from "@/lib/schema";
 import type { Language } from "@/lib/data/types";
 import CategoryContent from "@/app/[categorySlug]/CategoryContent";
+import JsonLd from "@/components/JsonLd";
 
 // ISR: Revalidate every 30 minutes
 export const revalidate = 1800;
@@ -91,11 +92,23 @@ export default async function Page({ params }: Props) {
   const categoryIds = [category.id, ...subcategoryIds];
   const products = await getProductsByCategory(categoryIds);
 
+  // Generate Schema.org JSON-LD
+  const breadcrumbItems = [
+    { name: "Home", url: "/en" },
+    { name: category.name_en, url: `/en/${categorySlug}` },
+  ];
+  const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems, language);
+  const organizationSchema = generateOrganizationSchema(language);
+  const productListSchema = generateProductListSchema(products, category, language);
+
   return (
-    <CategoryContent
-      category={category}
-      products={products}
-      language={language}
-    />
+    <>
+      <JsonLd data={[breadcrumbSchema, organizationSchema, productListSchema]} />
+      <CategoryContent
+        category={category}
+        products={products}
+        language={language}
+      />
+    </>
   );
 }
