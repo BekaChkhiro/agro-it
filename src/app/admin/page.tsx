@@ -15,6 +15,7 @@ import {
   Moon,
   Sun,
   Users,
+  Globe,
 } from "lucide-react";
 
 import { CategoriesManager } from "@/components/admin/CategoriesManager";
@@ -25,6 +26,7 @@ import { ContactSubmissionsManager } from "@/components/admin/ContactSubmissions
 import { Dashboard } from "@/components/admin/Dashboard";
 import { TeamMembersManager } from "@/components/admin/TeamMembersManager";
 import { CSVImport } from "@/components/admin/CSVImport";
+import { SEOModule } from "@/components/admin/seo/SEOModule";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -66,6 +68,7 @@ type MenuView =
   | "success_stories"
   | "contact_submissions"
   | "team_members"
+  | "seo"
   | "settings";
 
 type ThemeMode = "light" | "dark";
@@ -196,6 +199,7 @@ export default function AdminPage() {
     { id: "success_stories", label: "Success Stories", icon: Trophy, description: "Customer success stories" },
     { id: "contact_submissions", label: "Contact Submissions", icon: Mail, description: "Customer inquiries & messages" },
     { id: "team_members", label: "Team Members", icon: Users, description: "Manage team member profiles" },
+    { id: "seo", label: "SEO", icon: Globe, description: "Search engine optimization settings" },
     { id: "settings", label: "CSV Import", icon: Settings, description: "Import categories & products from CSV" },
   ] satisfies Array<{ id: MenuView; label: string; icon: typeof LayoutDashboard; description: string }>;
 
@@ -357,6 +361,7 @@ export default function AdminPage() {
                 {activeView === "success_stories" && <SuccessStoriesManager />}
                 {activeView === "contact_submissions" && <ContactSubmissionsManager />}
                 {activeView === "team_members" && <TeamMembersManager />}
+                {activeView === "seo" && <SEOModule />}
                 {activeView === "settings" && (
                   <CSVImport onImportComplete={() => {
                     // Import completed
