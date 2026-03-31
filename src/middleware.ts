@@ -84,6 +84,18 @@ export async function middleware(request: NextRequest) {
   const host = request.headers.get("host") || "";
   const domainLang = DOMAIN_LANG_MAP[host] || "ka";
 
+  // Normalize trailing slashes: /path/ → /path (except root /)
+  const normalizedPath = pathname.length > 1 && pathname.endsWith("/")
+    ? pathname.slice(0, -1)
+    : pathname;
+
+  if (normalizedPath !== pathname) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = normalizedPath;
+    redirectUrl.search = search;
+    return NextResponse.redirect(redirectUrl, 301);
+  }
+
   // Normalize URLs to lowercase (redirect uppercase to lowercase)
   const staticRoutes = ['/en', '/about', '/contact', '/blog', '/products', '/admin', '/auth', '/success-stories', '/success-story'];
   const isStaticRoute = staticRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
@@ -95,17 +107,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl, 301);
   }
 
-  // Redirect /ru/* to /en/*
-  if (pathname === RU_PREFIX || pathname.startsWith(`${RU_PREFIX}/`)) {
-    const strippedPath = pathname.replace(/^\/ru/, "");
-    const targetPath = strippedPath ? `/en${strippedPath}` : "/en";
-    const redirectUrl = request.nextUrl.clone();
-    redirectUrl.pathname = targetPath;
-    redirectUrl.search = search;
-    return NextResponse.redirect(redirectUrl, 308);
-  }
-
-  // Check database redirects
+  // Check database redirects BEFORE generic /ru/ handling
+  // so specific redirects take priority
   const redirects = await getRedirects();
   const matched = matchRedirect(pathname, redirects);
 
@@ -134,6 +137,16 @@ export async function middleware(request: NextRequest) {
     trackRedirectHit(request, matched.from_path).catch(() => {});
 
     return NextResponse.redirect(redirectUrl, matched.status_code);
+  }
+
+  // Redirect /ru/* to /en/* (generic fallback for paths not in redirects table)
+  if (pathname === RU_PREFIX || pathname.startsWith(`${RU_PREFIX}/`)) {
+    const strippedPath = pathname.replace(/^\/ru/, "");
+    const targetPath = strippedPath ? `/en${strippedPath}` : "/en";
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = targetPath;
+    redirectUrl.search = search;
+    return NextResponse.redirect(redirectUrl, 308);
   }
 
   // Set domain language cookie for client-side hydration
