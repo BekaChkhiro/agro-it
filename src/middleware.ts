@@ -80,7 +80,14 @@ function matchRedirect(
 }
 
 export async function middleware(request: NextRequest) {
-  const { pathname, search } = request.nextUrl;
+  // Decode URL-encoded paths (e.g. %e1%83%9b... → მულ...)
+  let pathname: string;
+  try {
+    pathname = decodeURIComponent(request.nextUrl.pathname);
+  } catch {
+    pathname = request.nextUrl.pathname;
+  }
+  const { search } = request.nextUrl;
   const host = request.headers.get("host") || "";
   const domainLang = DOMAIN_LANG_MAP[host] || "ka";
 
