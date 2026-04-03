@@ -47,13 +47,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       };
     }
 
-    const title = getLocalizedField(category, "name", language);
-    const description = getLocalizedField(category, "description", language) || `${title} - AGROIT`;
+    const title = getLocalizedField(category, "meta_title", language) || getLocalizedField(category, "name", language);
+    const description = getLocalizedField(category, "meta_description", language) || getLocalizedField(category, "description", language) || `${title} - AGROIT`;
+    const keywords = getLocalizedField(category, "keywords", language) || undefined;
 
     // Generate Schema.org JSON-LD
     const breadcrumbItems = [
       { name: language === "en" ? "Home" : "მთავარი", url: language === "en" ? "/en" : "/" },
-      { name: title, url: `/${categorySlug}` },
+      { name: getLocalizedField(category, "name", language), url: `/${categorySlug}` },
     ];
     const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems, language);
     const organizationSchema = generateOrganizationSchema(language);
@@ -62,9 +63,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: title || "Category",
       description: description || "AGROIT",
       path: `/${categorySlug}`,
-      image: category.banner_image_url ?? undefined,
+      image: (category as any).og_image_override || category.banner_image_url || undefined,
       type: "website",
       language,
+      keywords,
       schemas: [breadcrumbSchema, organizationSchema],
     });
   } catch (error) {
