@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Settings, FileText, ArrowRightLeft, Map, Bot, Code2, Activity } from "lucide-react";
+import { Settings, FileText, ArrowRightLeft, Map, Bot, Code2, Activity, FolderTree, Package } from "lucide-react";
 
 import { GlobalSEOSettings } from "./GlobalSEOSettings";
 import { PageSEOManager } from "./PageSEOManager";
+import { CategorySEOManager } from "./CategorySEOManager";
+import { ProductSEOManager } from "./ProductSEOManager";
 import { RedirectsManager } from "./RedirectsManager";
 import { SitemapManager } from "./SitemapManager";
 import { RobotsTxtEditor } from "./RobotsTxtEditor";
@@ -16,7 +18,7 @@ import {
   AdminTabsTrigger,
 } from "@/components/admin/form/primitives";
 
-type SEOTab = "global" | "pages" | "redirects" | "sitemap" | "robots" | "schema" | "audit";
+type SEOTab = "global" | "pages" | "categories" | "products" | "redirects" | "sitemap" | "robots" | "schema" | "audit";
 
 export function SEOModule() {
   const [activeTab, setActiveTab] = useState<SEOTab>("global");
@@ -24,7 +26,7 @@ export function SEOModule() {
   return (
     <div className="space-y-6">
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as SEOTab)}>
-        <AdminTabsList columns={7}>
+        <AdminTabsList columns={9}>
           <AdminTabsTrigger value="global">
             <Settings className="mr-2 h-4 w-4" />
             Global
@@ -32,6 +34,14 @@ export function SEOModule() {
           <AdminTabsTrigger value="pages">
             <FileText className="mr-2 h-4 w-4" />
             Pages
+          </AdminTabsTrigger>
+          <AdminTabsTrigger value="categories">
+            <FolderTree className="mr-2 h-4 w-4" />
+            Categories
+          </AdminTabsTrigger>
+          <AdminTabsTrigger value="products">
+            <Package className="mr-2 h-4 w-4" />
+            Products
           </AdminTabsTrigger>
           <AdminTabsTrigger value="redirects">
             <ArrowRightLeft className="mr-2 h-4 w-4" />
@@ -60,6 +70,12 @@ export function SEOModule() {
         </TabsContent>
         <TabsContent value="pages">
           <PageSEOManager />
+        </TabsContent>
+        <TabsContent value="categories">
+          <CategorySEOManager />
+        </TabsContent>
+        <TabsContent value="products">
+          <ProductSEOManager />
         </TabsContent>
         <TabsContent value="redirects">
           <RedirectsManager />

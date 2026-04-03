@@ -154,6 +154,16 @@ export type Database = {
           slug_hy: string | null
           slug_ka: string | null
           slug_ru: string | null
+          meta_title_ka: string | null
+          meta_title_en: string | null
+          meta_title_hy: string | null
+          meta_description_ka: string | null
+          meta_description_en: string | null
+          meta_description_hy: string | null
+          keywords_ka: string | null
+          keywords_en: string | null
+          keywords_hy: string | null
+          og_image_override: string | null
           updated_at: string | null
         }
         Insert: {
@@ -181,6 +191,16 @@ export type Database = {
           slug_hy?: string | null
           slug_ka?: string | null
           slug_ru?: string | null
+          meta_title_ka?: string | null
+          meta_title_en?: string | null
+          meta_title_hy?: string | null
+          meta_description_ka?: string | null
+          meta_description_en?: string | null
+          meta_description_hy?: string | null
+          keywords_ka?: string | null
+          keywords_en?: string | null
+          keywords_hy?: string | null
+          og_image_override?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -208,6 +228,16 @@ export type Database = {
           slug_hy?: string | null
           slug_ka?: string | null
           slug_ru?: string | null
+          meta_title_ka?: string | null
+          meta_title_en?: string | null
+          meta_title_hy?: string | null
+          meta_description_ka?: string | null
+          meta_description_en?: string | null
+          meta_description_hy?: string | null
+          keywords_ka?: string | null
+          keywords_en?: string | null
+          keywords_hy?: string | null
+          og_image_override?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -322,6 +352,17 @@ export type Database = {
           specs_hy: Json | null
           specs_ka: Json | null
           specs_ru: Json | null
+          meta_title_ka: string | null
+          meta_title_en: string | null
+          meta_title_hy: string | null
+          meta_description_ka: string | null
+          meta_description_en: string | null
+          meta_description_hy: string | null
+          keywords_ka: string | null
+          keywords_en: string | null
+          keywords_hy: string | null
+          og_image_override: string | null
+          robots_override: string | null
           updated_at: string | null
           video_description_en: string | null
           video_description_hy: string | null
@@ -358,6 +399,17 @@ export type Database = {
           specs_hy?: Json | null
           specs_ka?: Json | null
           specs_ru?: Json | null
+          meta_title_ka?: string | null
+          meta_title_en?: string | null
+          meta_title_hy?: string | null
+          meta_description_ka?: string | null
+          meta_description_en?: string | null
+          meta_description_hy?: string | null
+          keywords_ka?: string | null
+          keywords_en?: string | null
+          keywords_hy?: string | null
+          og_image_override?: string | null
+          robots_override?: string | null
           updated_at?: string | null
           video_description_en?: string | null
           video_description_hy?: string | null
@@ -394,6 +446,17 @@ export type Database = {
           specs_hy?: Json | null
           specs_ka?: Json | null
           specs_ru?: Json | null
+          meta_title_ka?: string | null
+          meta_title_en?: string | null
+          meta_title_hy?: string | null
+          meta_description_ka?: string | null
+          meta_description_en?: string | null
+          meta_description_hy?: string | null
+          keywords_ka?: string | null
+          keywords_en?: string | null
+          keywords_hy?: string | null
+          og_image_override?: string | null
+          robots_override?: string | null
           updated_at?: string | null
           video_description_en?: string | null
           video_description_hy?: string | null
