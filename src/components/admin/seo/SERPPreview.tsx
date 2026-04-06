@@ -38,7 +38,7 @@ export function SERPPreview({ title, url, description, favicon }: SERPPreviewPro
             ) : (
               <Globe className="h-4 w-4" />
             )}
-            <span className="truncate">{url || "https://agroit.ge"}</span>
+            <span className="truncate">{url || "https://www.agroit.ge"}</span>
           </div>
           <h3 className="text-lg font-normal leading-tight text-blue-700 dark:text-blue-400">
             {displayTitle || "Page Title"}

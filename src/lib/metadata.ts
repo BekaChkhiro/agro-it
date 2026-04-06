@@ -67,7 +67,7 @@ export function generatePageMetadata({
   const optimizedDescription = truncateDescription(description);
 
   // Domain-aware canonical URL
-  const canonicalDomain = resolvedLanguage === "hy" ? "https://agroit.am" : "https://agroit.ge";
+  const canonicalDomain = resolvedLanguage === "hy" ? "https://www.agroit.am" : "https://www.agroit.ge";
   const canonicalUrl = `${canonicalDomain}${path}`;
 
   const baseUrl = getBaseUrl();
@@ -116,7 +116,7 @@ export function generatePageMetadata({
       languages: {
         ka: getCanonicalUrl(getAlternateUrl(path, "ka")),
         en: getCanonicalUrl(getAlternateUrl(path, "en")),
-        hy: `https://agroit.am${getAlternateUrl(path, "ka")}`,
+        hy: `https://www.agroit.am${getAlternateUrl(path, "ka")}`,
         "x-default": getCanonicalUrl(getAlternateUrl(path, "ka")),
       },
     },

@@ -200,11 +200,11 @@ export function getFullAlternateUrl(path: string, targetLang: 'ka' | 'en' | 'hy'
 
   switch (targetLang) {
     case 'ka':
-      return `https://agroit.ge${basePath}`;
+      return `https://www.agroit.ge${basePath}`;
     case 'hy':
-      return `https://agroit.am${basePath}`;
+      return `https://www.agroit.am${basePath}`;
     case 'en':
-      return `https://agroit.ge${basePath === '/' ? '/en' : `/en${basePath}`}`;
+      return `https://www.agroit.ge${basePath === '/' ? '/en' : `/en${basePath}`}`;
   }
 }
 

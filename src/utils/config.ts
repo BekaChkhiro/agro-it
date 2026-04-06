@@ -13,7 +13,7 @@ export function getBaseUrl(): string {
     process.env.VITE_SITE_URL ||
     process.env.NEXT_PUBLIC_BASE_URL ||
     process.env.VITE_BASE_URL ||
-    "https://agroit.ge" // Production fallback
+    "https://www.agroit.ge" // Production fallback
   );
 }
 
@@ -43,7 +43,7 @@ export function getDomainLanguage(hostname: string): DomainLanguage {
  * Get the base URL for a specific language/domain
  */
 export function getBaseUrlForLanguage(lang: "ka" | "en" | "hy" | "ru"): string {
-  if (lang === "hy") return process.env.NEXT_PUBLIC_SITE_URL_AM || "https://agroit.am";
+  if (lang === "hy") return process.env.NEXT_PUBLIC_SITE_URL_AM || "https://www.agroit.am";
   // "ru" and "en" use the same base URL as "ka"
   return getBaseUrl();
 }
