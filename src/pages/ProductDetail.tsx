@@ -16,6 +16,22 @@ import type { Json } from "@/integrations/supabase/types";
 import QuoteRequestDialog from "@/components/QuoteRequestDialog";
 import DOMPurify from "dompurify";
 import { getBaseUrl } from "@/utils/config";
+
+const SANITIZE_CONFIG = {
+  ALLOWED_TAGS: [
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'p', 'br', 'hr',
+    'strong', 'em', 'u', 'b', 'i', 's', 'mark',
+    'ul', 'ol', 'li',
+    'a', 'img',
+    'blockquote', 'pre', 'code',
+    'table', 'thead', 'tbody', 'tr', 'th', 'td',
+    'div', 'span',
+  ],
+  ALLOWED_ATTR: ['href', 'title', 'src', 'alt', 'width', 'height'],
+  ALLOWED_URI_REGEXP: /^https?:\/\//i,
+  KEEP_CONTENT: true,
+};
 import { ProductDetailSkeleton } from "@/components/skeletons/PageSkeletons";
 import { getLocalizedField } from "@/utils/languageFields";
 
@@ -513,7 +529,7 @@ const ProductDetail = () => {
                     {product && (() => {
                       const description = getLocalizedField(product, "description", language);
                       if (!description) return null;
-                      const sanitized = DOMPurify.sanitize(description);
+                      const sanitized = DOMPurify.sanitize(description, SANITIZE_CONFIG);
                       return <div dangerouslySetInnerHTML={{ __html: sanitized }} />;
                     })()}
                   </div>
@@ -574,7 +590,7 @@ const ProductDetail = () => {
                   </h2>
                   <div className="prose prose-sm max-w-none text-muted-foreground prose-p:text-muted-foreground prose-p:mb-2 prose-ul:text-muted-foreground prose-ol:text-muted-foreground prose-li:mb-1 prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
                     {(() => {
-                      const sanitized = DOMPurify.sanitize(additionalInfo);
+                      const sanitized = DOMPurify.sanitize(additionalInfo, SANITIZE_CONFIG);
                       return <div dangerouslySetInnerHTML={{ __html: sanitized }} />;
                     })()}
                   </div>
@@ -610,7 +626,7 @@ const ProductDetail = () => {
                         <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
                         <div className="mt-1 text-sm text-muted-foreground prose prose-sm max-w-none prose-p:text-muted-foreground prose-p:mb-1 prose-ul:text-muted-foreground prose-ol:text-muted-foreground prose-li:mb-1 prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
                           {(() => {
-                            const sanitized = DOMPurify.sanitize(item.description);
+                            const sanitized = DOMPurify.sanitize(item.description, SANITIZE_CONFIG);
                             return <div dangerouslySetInnerHTML={{ __html: sanitized }} />;
                           })()}
                         </div>
