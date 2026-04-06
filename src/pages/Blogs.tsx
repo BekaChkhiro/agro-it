@@ -125,7 +125,7 @@ const Blogs = () => {
                     image={blog.featured_image_url || ""}
                     author={blog.author}
                     publishDate={blog.publish_date}
-                    link={getBlogPath(blog.slug ?? null, language)}
+                    link={getBlogPath(getLocalizedField(blog, "slug", language) || null, language)}
                     featured={blog.is_featured || false}
                   />
                 ))}

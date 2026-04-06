@@ -90,7 +90,7 @@ export function useBlogBySlug(slug: string | undefined) {
       const { data, error } = await supabase
         .from("blogs")
         .select("*")
-        .eq("slug", slug)
+        .or(`slug_en.eq.${slug},slug_ka.eq.${slug},slug_hy.eq.${slug},slug_ru.eq.${slug}`)
         .eq("is_published", true)
         .single();
 
