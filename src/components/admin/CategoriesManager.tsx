@@ -469,7 +469,7 @@ export function CategoriesManager() {
             </div>
           </CardHeader>
           <CardContent className="pb-6">
-            <ScrollArea className="max-h-[70vh] pr-2">
+            <ScrollArea className="h-[70vh] pr-2">
               <div className="space-y-1">
                 {loading ? (
                   [...Array(8)].map((_, index) => <Skeleton key={index} className="h-8 w-full" />)

@@ -2,16 +2,45 @@
 
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/data/translations";
+import { supabase } from "@/integrations/supabase/client";
 import logoImage from "@/assets/agroit-logo.webp";
 
 const Footer = () => {
   const { language, t } = useLanguage();
+  const resolvedLanguage = (language === "ru" || language === "hy") ? "en" : language;
 
   const getPath = (pathKa: string, pathEn: string) => {
     if (language === 'en' || language === 'hy') return pathEn;
     return pathKa;
+  };
+
+  // Fetch top-level categories dynamically (same as Header)
+  const { data: topCategories } = useQuery({
+    queryKey: ["footer-top-categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id, name_en, name_ka, name_hy, slug_en, slug_ka, slug_hy")
+        .is("parent_id", null)
+        .order("display_order", { ascending: true });
+      if (error) return [];
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const getCategoryName = (cat: any) => {
+    if (resolvedLanguage === "en") return cat.name_en;
+    return cat.name_ka || cat.name_en;
+  };
+
+  const getCategoryHref = (cat: any) => {
+    const slug = resolvedLanguage === "en" ? cat.slug_en : (cat.slug_ka || cat.slug_en);
+    if (!slug) return resolvedLanguage === "en" ? "/en" : "/";
+    return resolvedLanguage === "en" ? `/en/${slug}` : `/${slug}`;
   };
 
   return (
@@ -41,33 +70,17 @@ const Footer = () => {
                 {t(translations.footer.quickLinks.ka, translations.footer.quickLinks.en, undefined, translations.footer.quickLinks.hy)}
               </h4>
               <ul className="mt-4 space-y-3 text-white/80">
-                <li>
-                  <Link
-                    href={getPath("/venaxis-teqnika", "/en/vineyard-equipment")}
-                    className="inline-flex items-center gap-2 transition-smooth hover:text-white"
-                  >
-                    <span className="h-px w-6 bg-white/40" />
-                    {t(translations.categories.vineyard.ka, translations.categories.vineyard.en, undefined, translations.categories.vineyard.hy)}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href={getPath("/xexilis-teqnika", "/en/orchard-equipment")}
-                    className="inline-flex items-center gap-2 transition-smooth hover:text-white"
-                  >
-                    <span className="h-px w-6 bg-white/40" />
-                    {t(translations.categories.orchard.ka, translations.categories.orchard.en, undefined, translations.categories.orchard.hy)}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href={getPath("/kaklovani-teqnika", "/en/dry-fruits-equipment")}
-                    className="inline-flex items-center gap-2 transition-smooth hover:text-white"
-                  >
-                    <span className="h-px w-6 bg-white/40" />
-                    {t(translations.categories.dryFruits.ka, translations.categories.dryFruits.en, undefined, translations.categories.dryFruits.hy)}
-                  </Link>
-                </li>
+                {(topCategories || []).slice(0, 5).map((cat: any) => (
+                  <li key={cat.id}>
+                    <Link
+                      href={getCategoryHref(cat)}
+                      className="inline-flex items-center gap-2 transition-smooth hover:text-white"
+                    >
+                      <span className="h-px w-6 bg-white/40" />
+                      {getCategoryName(cat)}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
 

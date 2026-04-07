@@ -409,19 +409,12 @@ const ProductDetail = () => {
           <div className="absolute right-[-15%] top-[-25%] hidden h-[420px] w-[420px] rounded-full bg-primary/15 blur-3xl lg:block" />
 
           <div className="container mx-auto px-4">
-            <nav className="flex items-center gap-2 text-sm text-muted-foreground">
+            <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               <Link href={language === "en" ? "/en" : language === "ru" ? "/ru" : language === "hy" ? "/hy" : "/"} className="transition-smooth hover:text-foreground">
                 {t("მთავარი", "Home", undefined, "Գլխավոր")}
               </Link>
               {product?.category && (
                 <>
-                  <span>/</span>
-                  <Link
-                    href={getCategoryPath((product.category as { slug_en?: string }).slug_en || null, language)}
-                    className="transition-smooth hover:text-foreground"
-                  >
-                    {getLocalizedField(product.category, "name", language)}
-                  </Link>
                   {product.category.parent && (
                     <>
                       <span>/</span>
@@ -434,7 +427,14 @@ const ProductDetail = () => {
                     </>
                   )}
                   <span>/</span>
-                  <span className="text-foreground">
+                  <Link
+                    href={getCategoryPath((product.category as { slug_en?: string }).slug_en || null, language)}
+                    className="transition-smooth hover:text-foreground"
+                  >
+                    {getLocalizedField(product.category, "name", language)}
+                  </Link>
+                  <span>/</span>
+                  <span className="text-foreground font-medium">
                     {getLocalizedField(product, "name", language)}
                   </span>
                 </>
