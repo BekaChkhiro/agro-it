@@ -111,11 +111,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Note: Armenian domain (agroit.am) has its own sitemap
 
-  // Dynamic category pages (normalized to lowercase)
+  // Use ONLY slug_en for canonical URLs (avoid duplicate content)
+  // Both Georgian and English sections use the same English slug
+
   const categoryPagesKa: MetadataRoute.Sitemap = categories
-    .filter((cat) => cat.slug_ka || cat.slug_en)
+    .filter((cat) => cat.slug_en)
     .map((category) => {
-      const slug = normalizeSlug(category.slug_ka) || normalizeSlug(category.slug_en);
+      const slug = normalizeSlug(category.slug_en);
       if (!slug) return null;
       return {
         url: `${BASE_URL_GE}/${slug}`,
@@ -140,12 +142,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
     .filter((item): item is NonNullable<typeof item> => item !== null);
 
-  // Dynamic product pages (normalized to lowercase)
   const productPagesKa: MetadataRoute.Sitemap = products
     .filter((product) => product.slug_en && product.category?.slug_en)
     .map((product) => {
-      const categorySlug = normalizeSlug(product.category?.slug_ka) || normalizeSlug(product.category?.slug_en);
-      const productSlug = normalizeSlug(product.slug_ka) || normalizeSlug(product.slug_en);
+      const categorySlug = normalizeSlug(product.category!.slug_en);
+      const productSlug = normalizeSlug(product.slug_en);
       if (!categorySlug || !productSlug) return null;
       return {
         url: `${BASE_URL_GE}/${categorySlug}/${productSlug}`,
@@ -171,11 +172,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
     .filter((item): item is NonNullable<typeof item> => item !== null);
 
-  // Dynamic blog pages (normalized to lowercase)
+  // Blog pages (use slug_en preferentially)
   const blogPagesKa: MetadataRoute.Sitemap = blogs
-    .filter((blog) => blog.slug_ka || blog.slug_en)
+    .filter((blog) => blog.slug_en || blog.slug_ka)
     .map((blog) => {
-      const slug = normalizeSlug(blog.slug_ka) || normalizeSlug(blog.slug_en);
+      const slug = normalizeSlug(blog.slug_en) || normalizeSlug(blog.slug_ka);
       if (!slug) return null;
       return {
         url: `${BASE_URL_GE}/blog/${slug}`,
@@ -187,9 +188,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((item): item is NonNullable<typeof item> => item !== null);
 
   const blogPagesEn: MetadataRoute.Sitemap = blogs
-    .filter((blog) => blog.slug_en)
+    .filter((blog) => blog.slug_en || blog.slug_ka)
     .map((blog) => {
-      const slug = normalizeSlug(blog.slug_en);
+      const slug = normalizeSlug(blog.slug_en) || normalizeSlug(blog.slug_ka);
       if (!slug) return null;
       return {
         url: `${BASE_URL_GE}/en/blog/${slug}`,
@@ -200,11 +201,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
     .filter((item): item is NonNullable<typeof item> => item !== null);
 
-  // Dynamic success story pages (normalized to lowercase)
+  // Success story pages
   const successStoryPagesKa: MetadataRoute.Sitemap = successStories
-    .filter((story) => story.slug_ka || story.slug_en || story.title_en)
+    .filter((story) => story.slug_en || story.title_en)
     .map((story) => {
-      const slug = normalizeSlug(story.slug_ka) || normalizeSlug(story.slug_en) || (story.title_en ? normalizeSlug(generateSlug(story.title_en, false)) : null);
+      const slug = normalizeSlug(story.slug_en) || (story.title_en ? normalizeSlug(generateSlug(story.title_en, false)) : null);
       if (!slug) return null;
       return {
         url: `${BASE_URL_GE}/success-story/${slug}`,

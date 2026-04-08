@@ -8,10 +8,17 @@ import { usePublishedBlogs } from "@/hooks/useBlogs";
 import { getBlogPath } from "@/utils/urlHelpers";
 import { getLocalizedField } from "@/utils/languageFields";
 import { BlogsPageSkeleton } from "@/components/skeletons/PageSkeletons";
+import type { Blog } from "@/lib/data/types";
 
-const Blogs = () => {
+interface BlogsProps {
+  initialBlogs?: Blog[];
+}
+
+const Blogs = ({ initialBlogs }: BlogsProps = {}) => {
   const { language, t } = useLanguage();
-  const { data: blogs = [], isLoading, error } = usePublishedBlogs();
+  const { data: blogs = initialBlogs || [], isLoading: queryLoading, error } = usePublishedBlogs();
+  // If we have server-fetched data, skip the loading state on first render
+  const isLoading = initialBlogs ? false : queryLoading;
 
   // Sort blogs: featured first, then by publish date
   const sortedBlogs = [...blogs].sort((a, b) => {

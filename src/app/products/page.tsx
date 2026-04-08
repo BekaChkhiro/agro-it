@@ -4,6 +4,10 @@ import Products from "@/pages/Products";
 import { generatePageMetadata } from "@/lib/metadata";
 import { getBaseUrl, getDomainLanguage } from "@/utils/config";
 import { getPageSEO } from "@/lib/data/page-seo";
+import { getProducts } from "@/lib/data/products";
+import { getCategories } from "@/lib/data/categories";
+
+export const revalidate = 1800;
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = headers();
@@ -32,6 +36,10 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function Page() {
-  return <Products />;
+export default async function Page() {
+  const [products, categories] = await Promise.all([
+    getProducts(),
+    getCategories(),
+  ]);
+  return <Products initialProducts={products} initialCategories={categories} />;
 }

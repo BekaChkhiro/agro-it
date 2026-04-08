@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getCategoryBySlug, getSubcategories } from "@/lib/data/categories";
 import { getProductsByCategory } from "@/lib/data/products";
 import { generatePageMetadata } from "@/lib/metadata";
@@ -84,6 +84,11 @@ export default async function Page({ params }: Props) {
 
   if (!category) {
     notFound();
+  }
+
+  // 301 redirect to canonical English slug URL
+  if (category.slug_en && categorySlug !== category.slug_en) {
+    redirect(`/en/${category.slug_en}`);
   }
 
   // Get subcategories

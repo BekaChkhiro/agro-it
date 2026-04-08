@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getProductBySlug, getRelatedProducts, getProductsByCategory } from "@/lib/data/products";
 import { generatePageMetadata } from "@/lib/metadata";
 import { generateProductSchema, generateBreadcrumbSchema, generateOrganizationSchema } from "@/lib/schema";
@@ -100,6 +100,15 @@ export default async function Page({ params }: Props) {
 
   if (!product) {
     notFound();
+  }
+
+  // 301 redirect to canonical English slug URL
+  const expectedProductSlug = product.slug_en;
+  const expectedCategorySlug = product.category?.slug_en;
+  if (expectedProductSlug && expectedCategorySlug) {
+    if (productSlug !== expectedProductSlug || categorySlug !== expectedCategorySlug) {
+      redirect(`/${expectedCategorySlug}/${expectedProductSlug}`);
+    }
   }
 
   // Fetch related products

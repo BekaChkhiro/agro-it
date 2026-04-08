@@ -4,6 +4,9 @@ import Blog from "@/pages/Blogs";
 import { generatePageMetadata } from "@/lib/metadata";
 import { getBaseUrl, getDomainLanguage } from "@/utils/config";
 import { getPageSEO } from "@/lib/data/page-seo";
+import { getPublishedBlogs } from "@/lib/data/blogs";
+
+export const revalidate = 1800;
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = headers();
@@ -32,6 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function Page() {
-  return <Blog />;
+export default async function Page() {
+  const blogs = await getPublishedBlogs();
+  return <Blog initialBlogs={blogs} />;
 }

@@ -173,7 +173,7 @@ export function generateArticleSchema(
 
   return {
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": "BlogPosting",
     headline: title,
     description: description || undefined,
     image: blog.featured_image_url || undefined,

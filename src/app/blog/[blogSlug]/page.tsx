@@ -1,37 +1,34 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { notFound, redirect } from "next/navigation";
 import BlogDetail from "@/pages/BlogDetail";
-import { supabaseServer } from "@/integrations/supabase/server";
+import { getBlogBySlug } from "@/lib/data/blogs";
 import { generatePageMetadata } from "@/lib/metadata";
 import { getDomainLanguage } from "@/utils/config";
+import { generateArticleSchema, generateBreadcrumbSchema, generateOrganizationSchema } from "@/lib/schema";
+import JsonLd from "@/components/JsonLd";
 
 interface BlogPageParams {
   blogSlug: string;
 }
 
 type Props = {
-  params: BlogPageParams;
+  params: Promise<BlogPageParams>;
 };
 
-export async function generateMetadata(
-  { params }: Props
-): Promise<Metadata> {
-  const slug = params.blogSlug;
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { blogSlug } = await params;
   const headersList = headers();
   const host = (await headersList).get("host") || "agroit.ge";
   const language = getDomainLanguage(host);
 
   try {
-    // Fetch blog data with all language fields
-    const { data: blog } = await supabaseServer
-      .from("blogs")
-      .select("meta_title_ka, meta_title_hy, meta_title_en, meta_description_ka, meta_description_hy, meta_description_en, title_ka, title_hy, title_en, excerpt_ka, excerpt_hy, excerpt_en, featured_image_url")
-      .or(`slug_ka.eq.${slug},slug_en.eq.${slug},slug_hy.eq.${slug}`)
-      .single();
+    const blog = await getBlogBySlug(blogSlug);
 
     if (!blog) {
       return {
         title: "Blog Post Not Found",
+        robots: { index: false, follow: false },
       };
     }
 
@@ -45,13 +42,12 @@ export async function generateMetadata(
     return generatePageMetadata({
       title: title || "Blog Post",
       description: description || "AGROIT Blog",
-      path: `/blog/${slug}`,
+      path: `/blog/${blog.slug_en || blog.slug_ka || blogSlug}`,
       image: blog.featured_image_url || undefined,
       type: "article",
       language,
     });
   } catch (error) {
-    // Gracefully handle missing environment variables during build
     console.warn("Failed to generate metadata for blog:", error);
     return {
       title: "Blog Post",
@@ -60,6 +56,38 @@ export async function generateMetadata(
   }
 }
 
-export default function Page() {
-  return <BlogDetail />;
+export default async function Page({ params }: Props) {
+  const { blogSlug } = await params;
+  const headersList = await headers();
+  const host = headersList.get("host") || "agroit.ge";
+  const language = getDomainLanguage(host);
+
+  const blog = await getBlogBySlug(blogSlug);
+
+  if (!blog) {
+    notFound();
+  }
+
+  // 301 redirect to canonical English slug
+  if (blog.slug_en && blogSlug !== blog.slug_en) {
+    redirect(`/blog/${blog.slug_en}`);
+  }
+
+  // Generate Schema.org JSON-LD
+  const articleSchema = generateArticleSchema(blog, language);
+  const blogTitle = language === "hy" ? (blog.title_hy || blog.title_en) : blog.title_ka;
+  const breadcrumbItems = [
+    { name: language === "hy" ? "Home" : "მთავარი", url: "/" },
+    { name: language === "hy" ? "Blog" : "ბლოგი", url: "/blog" },
+    { name: blogTitle, url: `/blog/${blog.slug_en || blog.slug_ka}` },
+  ];
+  const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems, language);
+  const organizationSchema = generateOrganizationSchema(language);
+
+  return (
+    <>
+      <JsonLd data={[articleSchema, breadcrumbSchema, organizationSchema]} />
+      <BlogDetail />
+    </>
+  );
 }

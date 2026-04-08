@@ -17,15 +17,23 @@ import { getProductPath } from "@/utils/urlHelpers";
 import { getOptimizedImageUrl } from "@/utils/image";
 import { ProductsPageSkeleton } from "@/components/skeletons/PageSkeletons";
 import { getLocalizedField } from "@/utils/languageFields";
+import type { ProductWithCategory, Category } from "@/lib/data/types";
 
-const Products = () => {
+interface ProductsProps {
+  initialProducts?: ProductWithCategory[];
+  initialCategories?: Category[];
+}
+
+const Products = ({ initialProducts, initialCategories }: ProductsProps = {}) => {
   const { language, t } = useLanguage();
   const {
-    data: products = [],
-    isLoading,
+    data: products = initialProducts || [],
+    isLoading: productsLoading,
     error,
   } = useProductsWithCategory();
-  const { data: categoriesData = [], isLoading: categoriesLoading } = useCategories();
+  const { data: categoriesData = initialCategories || [], isLoading: catLoading } = useCategories();
+  const isLoading = initialProducts ? false : (productsLoading || catLoading);
+  const categoriesLoading = initialCategories ? false : catLoading;
   const [searchTerm, setSearchTerm] = useState("");
 
   const pageTitle = t(
