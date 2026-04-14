@@ -38,44 +38,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const host = headersList.get("host") || "agroit.ge";
   const language = getDomainLanguage(host) as Language;
 
-  try {
-    const category = await getCategoryBySlug(categorySlug);
+  const category = await getCategoryBySlug(categorySlug);
 
-    if (!category) {
-      notFound();
-    }
-
-    const title = getLocalizedField(category, "meta_title", language) || getLocalizedField(category, "name", language);
-    const description = getLocalizedField(category, "meta_description", language) || getLocalizedField(category, "description", language) || `${title} - AGROIT`;
-    const keywords = getLocalizedField(category, "keywords", language) || undefined;
-
-    // Generate Schema.org JSON-LD
-    const breadcrumbItems = [
-      { name: language === "en" ? "Home" : "მთავარი", url: language === "en" ? "/en" : "/" },
-      { name: getLocalizedField(category, "name", language), url: `/${categorySlug}` },
-    ];
-    const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems, language);
-    const organizationSchema = generateOrganizationSchema(language);
-
-    return generatePageMetadata({
-      title: title || "Category",
-      description: description || "AGROIT",
-      path: `/${categorySlug}`,
-      image: (category as any).og_image_override || category.banner_image_url || undefined,
-      type: "website",
-      language,
-      keywords,
-      schemas: [breadcrumbSchema, organizationSchema],
-    });
-  } catch (error) {
-    // Re-throw Next.js navigation errors (notFound, redirect)
-    if (error && typeof error === 'object' && 'digest' in error) throw error;
-    console.warn("Failed to generate metadata for category:", error);
+  if (!category) {
     return {
-      title: "Category",
-      description: "AGROIT Category",
+      title: "Not Found",
+      robots: { index: false, follow: false },
     };
   }
+
+  const title = getLocalizedField(category, "meta_title", language) || getLocalizedField(category, "name", language);
+  const description = getLocalizedField(category, "meta_description", language) || getLocalizedField(category, "description", language) || `${title} - AGROIT`;
+  const keywords = getLocalizedField(category, "keywords", language) || undefined;
+
+  const breadcrumbItems = [
+    { name: language === "en" ? "Home" : "მთავარი", url: language === "en" ? "/en" : "/" },
+    { name: getLocalizedField(category, "name", language), url: `/${categorySlug}` },
+  ];
+  const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems, language);
+  const organizationSchema = generateOrganizationSchema(language);
+
+  return generatePageMetadata({
+    title: title || "Category",
+    description: description || "AGROIT",
+    path: `/${categorySlug}`,
+    image: (category as any).og_image_override || category.banner_image_url || undefined,
+    type: "website",
+    language,
+    keywords,
+    schemas: [breadcrumbSchema, organizationSchema],
+  });
 }
 
 export default async function Page({ params }: Props) {

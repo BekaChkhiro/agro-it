@@ -38,54 +38,44 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const host = headersList.get("host") || "agroit.ge";
   const language = getDomainLanguage(host) as Language;
 
-  try {
-    const product = await getProductBySlug(productSlug);
+  const product = await getProductBySlug(productSlug);
 
-    if (!product) {
-      notFound();
-    }
-
-    const title = getLocalizedField(product, "meta_title", language) || getLocalizedField(product, "name", language);
-    const description = getLocalizedField(product, "meta_description", language) || getLocalizedField(product, "description", language) || `${title} - AGROIT`;
-    const keywords = getLocalizedField(product, "keywords", language) || undefined;
-    const categoryPath = product.category?.slug_en ? `/${product.category.slug_en}` : "";
-
-    // Generate Schema.org JSON-LD
-    const productSchema = generateProductSchema(product, language, categoryPath);
-    const breadcrumbItems = [
-      { name: language === "en" ? "Home" : "მთავარი", url: language === "en" ? "/en" : "/" },
-    ];
-    if (product.category) {
-      breadcrumbItems.push({
-        name: getLocalizedField(product.category, "name", language),
-        url: language === "en" ? `/en/${product.category.slug_en}` : `/${product.category.slug_ka || product.category.slug_en}`,
-      });
-    }
-    breadcrumbItems.push({
-      name: getLocalizedField(product, "name", language),
-      url: `${categoryPath}/${productSlug}`,
-    });
-    const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems, language);
-    const organizationSchema = generateOrganizationSchema(language);
-
-    return generatePageMetadata({
-      title: title || "Product",
-      description: description || "AGROIT",
-      path: `/${categorySlug}/${productSlug}`,
-      image: (product as any).og_image_override || product.image_url || undefined,
-      type: "product",
-      language,
-      keywords,
-      schemas: [productSchema, breadcrumbSchema, organizationSchema],
-    });
-  } catch (error) {
-    if (error && typeof error === 'object' && 'digest' in error) throw error;
-    console.warn("Failed to generate metadata for product:", error);
-    return {
-      title: "Product",
-      description: "AGROIT Product",
-    };
+  if (!product) {
+    return { title: "Not Found", robots: { index: false, follow: false } };
   }
+
+  const title = getLocalizedField(product, "meta_title", language) || getLocalizedField(product, "name", language);
+  const description = getLocalizedField(product, "meta_description", language) || getLocalizedField(product, "description", language) || `${title} - AGROIT`;
+  const keywords = getLocalizedField(product, "keywords", language) || undefined;
+  const categoryPath = product.category?.slug_en ? `/${product.category.slug_en}` : "";
+
+  const productSchema = generateProductSchema(product, language, categoryPath);
+  const breadcrumbItems = [
+    { name: language === "en" ? "Home" : "მთავარი", url: language === "en" ? "/en" : "/" },
+  ];
+  if (product.category) {
+    breadcrumbItems.push({
+      name: getLocalizedField(product.category, "name", language),
+      url: language === "en" ? `/en/${product.category.slug_en}` : `/${product.category.slug_ka || product.category.slug_en}`,
+    });
+  }
+  breadcrumbItems.push({
+    name: getLocalizedField(product, "name", language),
+    url: `${categoryPath}/${productSlug}`,
+  });
+  const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems, language);
+  const organizationSchema = generateOrganizationSchema(language);
+
+  return generatePageMetadata({
+    title: title || "Product",
+    description: description || "AGROIT",
+    path: `/${categorySlug}/${productSlug}`,
+    image: (product as any).og_image_override || product.image_url || undefined,
+    type: "product",
+    language,
+    keywords,
+    schemas: [productSchema, breadcrumbSchema, organizationSchema],
+  });
 }
 
 export default async function Page({ params }: Props) {
