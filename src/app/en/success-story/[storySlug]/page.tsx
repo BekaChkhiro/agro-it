@@ -36,6 +36,7 @@ export async function generateMetadata(
       language,
     });
   } catch (error) {
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
     console.warn("Failed to generate metadata for success story:", error);
     return {
       title: "Success Story",

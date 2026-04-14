@@ -77,6 +77,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       schemas: [productSchema, breadcrumbSchema, organizationSchema],
     });
   } catch (error) {
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
     console.warn("Failed to generate metadata for product:", error);
     return {
       title: "Product",

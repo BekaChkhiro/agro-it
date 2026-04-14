@@ -68,6 +68,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       schemas: [breadcrumbSchema, organizationSchema],
     });
   } catch (error) {
+    // Re-throw Next.js navigation errors (notFound, redirect)
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
     console.warn("Failed to generate metadata for category:", error);
     return {
       title: "Category",

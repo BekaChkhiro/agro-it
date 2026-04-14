@@ -48,6 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       language,
     });
   } catch (error) {
+    if (error && typeof error === 'object' && 'digest' in error) throw error;
     console.warn("Failed to generate metadata for blog:", error);
     return {
       title: "Blog Post",
