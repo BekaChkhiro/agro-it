@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { getCategoryBySlug, getSubcategories } from "@/lib/data/categories";
 import { getProductsByCategory } from "@/lib/data/products";
 import { generatePageMetadata } from "@/lib/metadata";
@@ -40,9 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const category = await getCategoryBySlug(categorySlug);
 
     if (!category) {
-      return {
-        title: "Category Not Found",
-      };
+      notFound();
     }
 
     const title = getLocalizedField(category, "meta_title", language) || getLocalizedField(category, "name", language);
@@ -84,11 +82,6 @@ export default async function Page({ params }: Props) {
 
   if (!category) {
     notFound();
-  }
-
-  // 301 redirect to canonical English slug URL
-  if (category.slug_en && categorySlug !== category.slug_en) {
-    redirect(`/en/${category.slug_en}`);
   }
 
   // Get subcategories

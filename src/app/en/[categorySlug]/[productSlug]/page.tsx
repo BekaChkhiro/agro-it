@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { getProductBySlug, getRelatedProducts, getProductsByCategory } from "@/lib/data/products";
 import { generatePageMetadata } from "@/lib/metadata";
 import { generateProductSchema, generateBreadcrumbSchema, generateOrganizationSchema } from "@/lib/schema";
@@ -40,9 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const product = await getProductBySlug(productSlug);
 
     if (!product) {
-      return {
-        title: "Product Not Found",
-      };
+      notFound();
     }
 
     const title = getLocalizedField(product, "meta_title", language) || getLocalizedField(product, "name", language);
@@ -95,15 +93,6 @@ export default async function Page({ params }: Props) {
 
   if (!product) {
     notFound();
-  }
-
-  // 301 redirect to canonical English slug URL
-  const expectedProductSlug = product.slug_en;
-  const expectedCategorySlug = product.category?.slug_en;
-  if (expectedProductSlug && expectedCategorySlug) {
-    if (productSlug !== expectedProductSlug || categorySlug !== expectedCategorySlug) {
-      redirect(`/en/${expectedCategorySlug}/${expectedProductSlug}`);
-    }
   }
 
   // Fetch related products

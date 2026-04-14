@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import BlogDetail from "@/pages/BlogDetail";
 import { getBlogBySlug } from "@/lib/data/blogs";
 import { generatePageMetadata } from "@/lib/metadata";
@@ -66,11 +66,6 @@ export default async function Page({ params }: Props) {
 
   if (!blog) {
     notFound();
-  }
-
-  // 301 redirect to canonical English slug
-  if (blog.slug_en && blogSlug !== blog.slug_en) {
-    redirect(`/blog/${blog.slug_en}`);
   }
 
   // Generate Schema.org JSON-LD
