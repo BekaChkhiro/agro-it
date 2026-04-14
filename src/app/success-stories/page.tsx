@@ -4,6 +4,9 @@ import SuccessStories from "@/pages/SuccessStories";
 import { generatePageMetadata } from "@/lib/metadata";
 import { getBaseUrl, getDomainLanguage } from "@/utils/config";
 import { getPageSEO } from "@/lib/data/page-seo";
+import { getPublishedSuccessStories } from "@/lib/data/success-stories";
+
+export const revalidate = 1800;
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = headers();
@@ -32,6 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function Page() {
-  return <SuccessStories />;
+export default async function Page() {
+  const stories = await getPublishedSuccessStories();
+  return <SuccessStories initialStories={stories} />;
 }

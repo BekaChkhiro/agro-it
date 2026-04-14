@@ -14,9 +14,14 @@ import { getLocalizedField } from "@/utils/languageFields";
 
 type SuccessStory = Database["public"]["Tables"]["success_stories"]["Row"];
 
-const SuccessStories = () => {
+interface SuccessStoriesProps {
+  initialStories?: SuccessStory[];
+}
+
+const SuccessStories = ({ initialStories }: SuccessStoriesProps = {}) => {
   const { language, t } = useLanguage();
-  const { data: stories = [], isLoading, error } = usePublishedSuccessStories();
+  const { data: stories = initialStories || [], isLoading: queryLoading, error } = usePublishedSuccessStories();
+  const isLoading = initialStories ? false : queryLoading;
 
   // Filter featured stories
   const featuredStories = stories.filter(story => story.is_featured);
