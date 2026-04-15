@@ -33,7 +33,7 @@ const BlogCard = ({ title, excerpt, image, author, publishDate, link, featured =
           <span className="pointer-events-none absolute inset-0 bg-hero-grid opacity-40" />
           {image ? (
             <img
-              src={image}
+              src={image.replace(/%0[aA]/g, '')}
               alt={title}
               loading="lazy"
               className="relative z-10 h-48 w-full object-cover transition-smooth group-hover:scale-105"

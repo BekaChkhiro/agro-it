@@ -44,11 +44,12 @@ const BlogDetail = () => {
     })
     .slice(0, 3);
 
-  // Gallery images from blog data
+  // Gallery images from blog data (clean %0A from URLs)
+  const cleanUrl = (url: string) => url.replace(/%0[aA]/g, '');
   const galleryImages = blog?.gallery_image_urls && Array.isArray(blog.gallery_image_urls)
-    ? blog.gallery_image_urls.filter((url): url is string => typeof url === "string")
+    ? blog.gallery_image_urls.filter((url): url is string => typeof url === "string").map(cleanUrl)
     : blog?.featured_image_url
-    ? [blog.featured_image_url]
+    ? [cleanUrl(blog.featured_image_url)]
     : [];
 
   // Format date
@@ -65,10 +66,27 @@ const BlogDetail = () => {
   const sanitizedContent = useMemo(() => {
     if (!blog) return "";
 
-    const rawContent = getLocalizedField(blog, "content", language);
+    let rawContent = getLocalizedField(blog, "content", language) || "";
+
+    // If content is plain text (no HTML tags), convert to HTML
+    if (rawContent && !/<[a-z][\s\S]*>/i.test(rawContent)) {
+      rawContent = rawContent
+        .split(/\n{2,}/)
+        .filter((block) => block.trim())
+        .map((block) => {
+          const trimmed = block.trim();
+          // Detect numbered list items (e.g. "1. Title")
+          if (/^\d+\.\s/.test(trimmed)) {
+            return `<h3>${trimmed}</h3>`;
+          }
+          // Convert single newlines within a block to <br>
+          return `<p>${trimmed.replace(/\n/g, '<br/>')}</p>`;
+        })
+        .join('\n');
+    }
 
     // Configure DOMPurify to allow safe HTML tags and attributes
-    const cleanContent = DOMPurify.sanitize(rawContent || "", {
+    const cleanContent = DOMPurify.sanitize(rawContent, {
       ALLOWED_TAGS: [
         'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
         'p', 'br', 'hr',
