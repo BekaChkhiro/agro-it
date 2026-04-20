@@ -128,13 +128,16 @@ export function generateBreadcrumbSchema(
 ) {
   const baseUrl = getBaseUrlForLanguage(language);
 
+  // Filter out items with empty/missing names (Google Search Console requires name)
+  const validItems = items.filter((item) => item.name && item.name.trim().length > 0);
+
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: items.map((item, index) => ({
+    itemListElement: validItems.map((item, index) => ({
       "@type": "ListItem",
       position: index + 1,
-      name: item.name,
+      name: item.name.trim(),
       item: item.url.startsWith("http") ? item.url : `${baseUrl}${item.url}`,
     })),
   };

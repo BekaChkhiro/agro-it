@@ -61,7 +61,7 @@ export default async function Page({ params }: Props) {
   return (
     <>
       <JsonLd data={[articleSchema, breadcrumbSchema, organizationSchema]} />
-      <BlogDetail />
+      <BlogDetail initialBlog={blog} />
     </>
   );
 }

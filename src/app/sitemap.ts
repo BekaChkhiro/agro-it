@@ -12,6 +12,9 @@ import { generateSlug } from "@/utils/urlHelpers";
 
 const BASE_URL_GE = "https://www.agroit.ge";
 
+// Revalidate sitemap every 5 minutes so new content is picked up automatically
+export const revalidate = 300;
+
 // Helper to normalize slugs (lowercase, replace spaces with hyphens)
 function normalizeSlug(slug: string | null | undefined): string | null {
   if (!slug) return null;

@@ -4,6 +4,8 @@ import Contact from "@/pages/Contact";
 import { generatePageMetadata } from "@/lib/metadata";
 import { getBaseUrl, getDomainLanguage } from "@/utils/config";
 import { getPageSEO } from "@/lib/data/page-seo";
+import { generateLocalBusinessSchema, generateBreadcrumbSchema, generateOrganizationSchema } from "@/lib/schema";
+import JsonLd from "@/components/JsonLd";
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = headers();
@@ -32,6 +34,25 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function Page() {
-  return <Contact />;
+export default async function Page() {
+  const headersList = await headers();
+  const host = headersList.get("host") || "agroit.ge";
+  const language = getDomainLanguage(host);
+
+  const localBusinessSchema = generateLocalBusinessSchema(language);
+  const organizationSchema = generateOrganizationSchema(language);
+  const breadcrumbSchema = generateBreadcrumbSchema(
+    [
+      { name: language === "hy" ? "Home" : "მთავარი", url: "/" },
+      { name: language === "hy" ? "Contact" : "კონტაქტი", url: "/contact" },
+    ],
+    language
+  );
+
+  return (
+    <>
+      <JsonLd data={[localBusinessSchema, organizationSchema, breadcrumbSchema]} />
+      <Contact />
+    </>
+  );
 }

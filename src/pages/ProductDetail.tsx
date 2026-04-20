@@ -35,8 +35,13 @@ const SANITIZE_CONFIG = {
 import { ProductDetailSkeleton } from "@/components/skeletons/PageSkeletons";
 import { getLocalizedField } from "@/utils/languageFields";
 
+interface ProductDetailProps {
+  initialProduct?: any;
+  initialRelatedProducts?: any[];
+}
+
 // ProductDetail renders the detailed product experience including the gallery and related content.
-const ProductDetail = () => {
+const ProductDetail = ({ initialProduct, initialRelatedProducts }: ProductDetailProps = {}) => {
   const params = useParams();
   const productSlug = params?.productSlug as string;
   const router = useRouter();
@@ -47,12 +52,13 @@ const ProductDetail = () => {
   // Check if productSlug is actually a UUID (legacy URL support)
   const isLegacyUUID = productSlug && isUUID(productSlug);
 
-  // Fetch product by slug
+  // Fetch product by slug (server-provided fallback)
   const {
-    data: product,
-    isLoading,
+    data: product = initialProduct,
+    isLoading: queryLoading,
     error,
   } = useProductBySlug(isLegacyUUID ? undefined : productSlug);
+  const isLoading = initialProduct ? false : queryLoading;
 
   // Redirect legacy UUID URLs to slug-based URLs
   useEffect(() => {
