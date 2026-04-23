@@ -22,16 +22,17 @@ export async function generateMetadata(
   const language = getDomainLanguage(host);
 
   try {
-    // Fetch story data with all language fields
+    // Fetch story data with all language fields + slugs for canonical URL
     const { data: story } = await supabaseServer
       .from("success_stories")
-      .select("meta_title_ka, meta_title_hy, meta_title_en, meta_description_ka, meta_description_hy, meta_description_en, title_ka, title_hy, title_en, excerpt_ka, excerpt_hy, excerpt_en, featured_image_url")
+      .select("meta_title_ka, meta_title_hy, meta_title_en, meta_description_ka, meta_description_hy, meta_description_en, title_ka, title_hy, title_en, excerpt_ka, excerpt_hy, excerpt_en, featured_image_url, slug_en, slug_ka, slug_hy")
       .or(`slug_ka.eq.${slug},slug_en.eq.${slug},slug_hy.eq.${slug}`)
       .single();
 
     if (!story) {
       return {
         title: "Success Story Not Found",
+        robots: { index: false, follow: false },
       };
     }
 
@@ -42,10 +43,13 @@ export async function generateMetadata(
       ? (story.meta_description_hy || story.excerpt_hy || story.meta_description_en || story.excerpt_en || story.title_hy || story.title_en)
       : (story.meta_description_ka || story.excerpt_ka || story.title_ka);
 
+    // Always use slug_en for canonical path to avoid duplicate content
+    const canonicalSlug = story.slug_en || story.slug_ka || slug;
+
     return generatePageMetadata({
       title: title || "Success Story",
       description: description || "AGROIT Success Story",
-      path: `/success-story/${slug}`,
+      path: `/success-story/${canonicalSlug}`,
       image: story.featured_image_url || undefined,
       type: "article",
       language,

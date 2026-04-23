@@ -17,20 +17,24 @@ export async function generateMetadata(
     // Fetch story data (include slug_hy for cross-domain lookup)
     const { data: story } = await supabaseServer
       .from("success_stories")
-      .select("meta_title_en, meta_description_en, title_en, excerpt_en, featured_image_url")
-      .or(`slug_en.eq.${slug},slug_hy.eq.${slug}`)
+      .select("meta_title_en, meta_description_en, title_en, excerpt_en, featured_image_url, slug_en, slug_ka, slug_hy")
+      .or(`slug_en.eq.${slug},slug_hy.eq.${slug},slug_ka.eq.${slug}`)
       .single();
 
     if (!story) {
       return {
         title: "Success Story Not Found",
+        robots: { index: false, follow: false },
       };
     }
+
+    // Always use slug_en for canonical path to avoid duplicate content
+    const canonicalSlug = story.slug_en || slug;
 
     return generatePageMetadata({
       title: story.meta_title_en || story.title_en,
       description: story.meta_description_en || story.excerpt_en || story.title_en,
-      path: `/en/success-story/${slug}`,
+      path: `/en/success-story/${canonicalSlug}`,
       image: story.featured_image_url || undefined,
       type: "article",
       language,

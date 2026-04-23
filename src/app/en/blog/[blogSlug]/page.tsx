@@ -23,10 +23,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       };
     }
 
+    // Always use slug_en for canonical path to avoid duplicate content
+    const canonicalSlug = blog.slug_en || blog.slug_ka || blogSlug;
+
     return generatePageMetadata({
       title: blog.meta_title_en || blog.title_en,
       description: blog.meta_description_en || blog.excerpt_en || blog.title_en,
-      path: `/en/blog/${blog.slug_en || blog.slug_ka || blogSlug}`,
+      path: `/en/blog/${canonicalSlug}`,
       image: blog.featured_image_url || undefined,
       type: "article",
       language: "en",
@@ -50,10 +53,12 @@ export default async function Page({ params }: Props) {
   }
 
   const articleSchema = generateArticleSchema(blog, "en");
+  // Always use slug_en for canonical breadcrumb URL
+  const canonicalSlug = blog.slug_en || blog.slug_ka || blogSlug;
   const breadcrumbItems = [
     { name: "Home", url: "/en" },
     { name: "Blog", url: "/en/blog" },
-    { name: blog.title_en, url: `/en/blog/${blog.slug_en || blog.slug_ka}` },
+    { name: blog.title_en, url: `/en/blog/${canonicalSlug}` },
   ];
   const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems, "en");
   const organizationSchema = generateOrganizationSchema("en");

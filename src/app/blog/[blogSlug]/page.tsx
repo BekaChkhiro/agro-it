@@ -39,10 +39,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? (blog.meta_description_hy || blog.excerpt_hy || blog.meta_description_en || blog.excerpt_en || blog.title_hy || blog.title_en)
       : (blog.meta_description_ka || blog.excerpt_ka || blog.title_ka);
 
+    // Always use slug_en for canonical path to avoid duplicate content
+    const canonicalSlug = blog.slug_en || blog.slug_ka || blogSlug;
+
     return generatePageMetadata({
       title: title || "Blog Post",
       description: description || "AGROIT Blog",
-      path: `/blog/${blog.slug_en || blog.slug_ka || blogSlug}`,
+      path: `/blog/${canonicalSlug}`,
       image: blog.featured_image_url || undefined,
       type: "article",
       language,
@@ -72,10 +75,12 @@ export default async function Page({ params }: Props) {
   // Generate Schema.org JSON-LD
   const articleSchema = generateArticleSchema(blog, language);
   const blogTitle = language === "hy" ? (blog.title_hy || blog.title_en) : blog.title_ka;
+  // Always use slug_en for canonical breadcrumb URL
+  const canonicalSlug = blog.slug_en || blog.slug_ka || blogSlug;
   const breadcrumbItems = [
     { name: language === "hy" ? "Home" : "მთავარი", url: "/" },
     { name: language === "hy" ? "Blog" : "ბლოგი", url: "/blog" },
-    { name: blogTitle, url: `/blog/${blog.slug_en || blog.slug_ka}` },
+    { name: blogTitle, url: `/blog/${canonicalSlug}` },
   ];
   const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems, language);
   const organizationSchema = generateOrganizationSchema(language);

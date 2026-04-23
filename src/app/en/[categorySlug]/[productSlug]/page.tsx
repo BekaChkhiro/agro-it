@@ -45,7 +45,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = getLocalizedField(product, "meta_title", language) || getLocalizedField(product, "name", language);
   const description = getLocalizedField(product, "meta_description", language) || getLocalizedField(product, "description", language) || `${title} - AGROIT`;
   const keywords = getLocalizedField(product, "keywords", language) || undefined;
-  const categoryPath = product.category?.slug_en ? `/${product.category.slug_en}` : "";
+
+  // Always use slug_en for canonical paths to avoid duplicate content
+  const canonicalCategorySlug = product.category?.slug_en || categorySlug;
+  const canonicalProductSlug = product.slug_en || productSlug;
+  const categoryPath = `/${canonicalCategorySlug}`;
+  const canonicalPath = `/en${categoryPath}/${canonicalProductSlug}`;
 
   const productSchema = generateProductSchema(product, language, categoryPath);
   const breadcrumbItems = [
@@ -54,12 +59,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (product.category) {
     breadcrumbItems.push({
       name: getLocalizedField(product.category, "name", language),
-      url: `/en/${product.category.slug_en}`,
+      url: `/en${categoryPath}`,
     });
   }
   breadcrumbItems.push({
     name: getLocalizedField(product, "name", language),
-    url: `/en${categoryPath}/${productSlug}`,
+    url: canonicalPath,
   });
   const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems, language);
   const organizationSchema = generateOrganizationSchema(language);
@@ -67,7 +72,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return generatePageMetadata({
     title: title || "Product",
     description: description || "AGROIT",
-    path: `/en/${categorySlug}/${productSlug}`,
+    path: canonicalPath,
     image: (product as any).og_image_override || product.image_url || undefined,
     type: "product",
     language,
@@ -102,7 +107,10 @@ export default async function Page({ params }: Props) {
   }
 
   // Generate Schema.org JSON-LD
-  const categoryPath = product.category?.slug_en ? `/${product.category.slug_en}` : "";
+  const canonicalCategorySlug = product.category?.slug_en || categorySlug;
+  const canonicalProductSlug = product.slug_en || productSlug;
+  const categoryPath = `/${canonicalCategorySlug}`;
+  const productPath = `/en${categoryPath}/${canonicalProductSlug}`;
   const productSchema = generateProductSchema(product, language, categoryPath);
   const breadcrumbItems = [
     { name: "Home", url: "/en" },
@@ -110,12 +118,12 @@ export default async function Page({ params }: Props) {
   if (product.category) {
     breadcrumbItems.push({
       name: product.category.name_en,
-      url: `/en/${product.category.slug_en}`,
+      url: `/en${categoryPath}`,
     });
   }
   breadcrumbItems.push({
     name: product.name_en,
-    url: `/en${categoryPath}/${product.slug_en}`,
+    url: productPath,
   });
   const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems, language);
   const organizationSchema = generateOrganizationSchema(language);
