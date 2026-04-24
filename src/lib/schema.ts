@@ -49,15 +49,15 @@ export function generateOrganizationSchema(language: Language = "ka") {
 }
 
 /**
- * Generate Product schema
- * Used on product detail pages
+ * Generate Product schema (Basic version — no price fields)
+ * Used on product detail pages. We don't display prices, so we omit
+ * offers/aggregateRating/review to avoid "Invalid items" in Rich Results.
  */
 export function generateProductSchema(
   product: ProductWithCategory,
   language: Language = "ka",
-  categoryPath: string = ""
+  _categoryPath: string = ""
 ) {
-  const baseUrl = getBaseUrlForLanguage(language);
   const name = language === "en"
     ? product.name_en
     : language === "hy"
@@ -68,15 +68,6 @@ export function generateProductSchema(
     : language === "hy"
     ? (product.description_hy || product.description_en)
     : product.description_ka;
-  const slug = language === "en"
-    ? product.slug_en
-    : language === "hy"
-    ? (product.slug_hy || product.slug_en)
-    : product.slug_ka;
-
-  const productUrl = categoryPath
-    ? `${baseUrl}${language === "en" ? "/en" : ""}${categoryPath}/${slug}`
-    : `${baseUrl}${language === "en" ? "/en" : ""}/${slug}`;
 
   return {
     "@context": "https://schema.org",
@@ -84,37 +75,11 @@ export function generateProductSchema(
     name,
     description: description || undefined,
     image: product.image_url || undefined,
-    url: productUrl,
+    sku: product.id,
     brand: {
       "@type": "Brand",
       name: "AGROIT",
     },
-    category: product.category
-      ? language === "en"
-        ? product.category.name_en
-        : language === "hy"
-        ? (product.category.name_hy || product.category.name_en)
-        : product.category.name_ka
-      : undefined,
-    offers: product.price
-      ? {
-          "@type": "Offer",
-          price: product.price,
-          priceCurrency: "GEL",
-          availability: "https://schema.org/InStock",
-          seller: {
-            "@type": "Organization",
-            name: "AGROIT",
-          },
-        }
-      : {
-          "@type": "Offer",
-          availability: "https://schema.org/InStock",
-          seller: {
-            "@type": "Organization",
-            name: "AGROIT",
-          },
-        },
   };
 }
 

@@ -12,8 +12,12 @@ import { generateSlug } from "@/utils/urlHelpers";
 
 const BASE_URL_GE = "https://www.agroit.ge";
 
-// Revalidate sitemap every 5 minutes so new content is picked up automatically
-export const revalidate = 300;
+// Force fresh generation on every request so new blogs/products appear
+// in sitemap.xml immediately after they're marked is_published = true.
+// Googlebot requests this only a handful of times per day, so the DB
+// hit is negligible — the guarantee of freshness is worth it.
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 // Helper to normalize slugs (lowercase, replace spaces with hyphens)
 function normalizeSlug(slug: string | null | undefined): string | null {
