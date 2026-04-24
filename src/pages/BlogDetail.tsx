@@ -285,10 +285,10 @@ const BlogDetail = ({ initialBlog }: BlogDetailProps = {}) => {
             <div className="mt-10">
               <Card className="rounded-[28px] border border-border/60 bg-white/95 shadow-soft">
                 <CardContent className="p-8 md:p-12">
-                  <div className="prose prose-lg max-w-none text-foreground prose-headings:text-foreground prose-h2:text-2xl prose-h2:font-semibold prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-6 prose-h3:mb-3 prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-4 prose-ul:text-muted-foreground prose-ol:text-muted-foreground prose-li:mb-2 prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
-                    {/* Render sanitized HTML content to prevent XSS attacks */}
-                    <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
-                  </div>
+                  <div
+                    className="prose prose-lg max-w-none text-foreground prose-headings:text-foreground prose-h1:text-3xl prose-h1:font-bold prose-h1:mt-10 prose-h1:mb-5 prose-h2:text-2xl prose-h2:font-semibold prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-6 prose-h3:mb-3 prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:mb-6 prose-ul:text-muted-foreground prose-ul:mb-6 prose-ol:text-muted-foreground prose-ol:mb-6 prose-li:mb-2 prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
+                    dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+                  />
                 </CardContent>
               </Card>
             </div>

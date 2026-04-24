@@ -344,12 +344,12 @@ const ProductContent = ({ product, relatedProducts, language }: ProductContentPr
                   <h1 className="mt-4 text-4xl font-bold leading-tight text-foreground md:text-5xl">
                     {productName}
                   </h1>
-                  <div className="mt-4 text-base text-muted-foreground md:text-lg prose prose-sm max-w-none prose-p:text-muted-foreground prose-p:mb-2 prose-ul:text-muted-foreground prose-ol:text-muted-foreground prose-li:mb-1 prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
-                    {productDescription && (() => {
-                      const sanitized = DOMPurify.sanitize(productDescription);
-                      return <div dangerouslySetInnerHTML={{ __html: sanitized }} />;
-                    })()}
-                  </div>
+                  {productDescription && (
+                    <div
+                      className="mt-4 text-base text-muted-foreground md:text-lg prose prose-sm max-w-none prose-p:text-muted-foreground prose-p:mb-4 prose-ul:text-muted-foreground prose-ul:mb-4 prose-ol:text-muted-foreground prose-ol:mb-4 prose-li:mb-1 prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(productDescription) }}
+                    />
+                  )}
                 </div>
 
                 <div className="flex flex-col gap-4 sm:flex-row">
@@ -405,12 +405,10 @@ const ProductContent = ({ product, relatedProducts, language }: ProductContentPr
                   <h2 className="text-2xl font-semibold text-foreground mb-6">
                     {t("დამატებითი ინფორმაცია", "Additional Information", undefined, "Լraс delays delays delays delays delays delays")}
                   </h2>
-                  <div className="prose prose-sm max-w-none text-muted-foreground prose-p:text-muted-foreground prose-p:mb-2 prose-ul:text-muted-foreground prose-ol:text-muted-foreground prose-li:mb-1 prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
-                    {(() => {
-                      const sanitized = DOMPurify.sanitize(additionalInfo!);
-                      return <div dangerouslySetInnerHTML={{ __html: sanitized }} />;
-                    })()}
-                  </div>
+                  <div
+                    className="prose prose-sm max-w-none text-muted-foreground prose-p:text-muted-foreground prose-p:mb-4 prose-ul:text-muted-foreground prose-ul:mb-4 prose-ol:text-muted-foreground prose-ol:mb-4 prose-li:mb-1 prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(additionalInfo!) }}
+                  />
                 </CardContent>
               </Card>
             </div>
@@ -441,12 +439,10 @@ const ProductContent = ({ product, relatedProducts, language }: ProductContentPr
                       </span>
                       <div>
                         <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
-                        <div className="mt-1 text-sm text-muted-foreground prose prose-sm max-w-none prose-p:text-muted-foreground prose-p:mb-1 prose-ul:text-muted-foreground prose-ol:text-muted-foreground prose-li:mb-1 prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
-                          {(() => {
-                            const sanitized = DOMPurify.sanitize(item.description);
-                            return <div dangerouslySetInnerHTML={{ __html: sanitized }} />;
-                          })()}
-                        </div>
+                        <div
+                          className="mt-1 text-sm text-muted-foreground prose prose-sm max-w-none prose-p:text-muted-foreground prose-p:mb-2 prose-ul:text-muted-foreground prose-ul:mb-2 prose-ol:text-muted-foreground prose-ol:mb-2 prose-li:mb-1 prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.description) }}
+                        />
                       </div>
                     </div>
                   ))}
