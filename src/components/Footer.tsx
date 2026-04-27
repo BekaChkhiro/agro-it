@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin, Facebook } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "@/data/translations";
@@ -186,6 +186,20 @@ const Footer = () => {
                   <div className="text-sm font-semibold">
                     {t('თბილისი, საქართველო', 'Tbilisi, Georgia', undefined, '\u0539\u0562\u056b\u056c\u056b\u057d\u056b, \u054e\u0580\u0561\u057d\u057f\u0561\u0576')}
                   </div>
+                </li>
+                <li>
+                  <a
+                    href="https://www.facebook.com/profile.php?id=100057472509433"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Facebook"
+                    className="flex w-full items-center gap-4 rounded-2xl bg-white/10 p-4 backdrop-blur-sm transition-smooth hover:bg-white/15"
+                  >
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-white">
+                      <Facebook className="h-5 w-5 flex-shrink-0" />
+                    </div>
+                    <div className="text-sm font-semibold text-white">Facebook</div>
+                  </a>
                 </li>
               </ul>
             </div>
