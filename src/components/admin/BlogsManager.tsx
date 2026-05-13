@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, useId } from "react";
 import { BookOpen, Plus, Search, Star, Trash2, Edit, ImagePlus, X, Calendar, Eye, Link2 } from "lucide-react";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 
 import { useToast } from "@/hooks/use-toast";
 import { useBlogs, useCreateBlog, useUpdateBlog, useDeleteBlog } from "@/hooks/useBlogs";
@@ -828,33 +829,33 @@ export function BlogsManager() {
                 </AdminFormSection>
                 <AdminFormSection title="Full Content">
                   <div className="space-y-3">
-                    <Label htmlFor="content_en" className="font-semibold">Content (English)</Label>
-                    <Textarea
+                    <Label className="font-semibold">Content (English)</Label>
+                    <RichTextEditor
                       id="content_en"
                       value={formData.content_en}
-                      onChange={(event) => setFormData({ ...formData, content_en: event.target.value })}
-                      rows={10}
+                      onChange={(value) => setFormData({ ...formData, content_en: value })}
                       placeholder="Full blog content in English..."
+                      minHeight={320}
                     />
                   </div>
                   <div className="space-y-3">
-                    <Label htmlFor="content_ka" className="font-semibold">Content (Georgian)</Label>
-                    <Textarea
+                    <Label className="font-semibold">Content (Georgian)</Label>
+                    <RichTextEditor
                       id="content_ka"
                       value={formData.content_ka}
-                      onChange={(event) => setFormData({ ...formData, content_ka: event.target.value })}
-                      rows={10}
+                      onChange={(value) => setFormData({ ...formData, content_ka: value })}
                       placeholder="სრული ბლოგის კონტენტი ქართულად..."
+                      minHeight={320}
                     />
                   </div>
                   <div className="space-y-3">
-                    <Label htmlFor="content_hy" className="font-semibold">Content (Armenian)</Label>
-                    <Textarea
+                    <Label className="font-semibold">Content (Armenian)</Label>
+                    <RichTextEditor
                       id="content_hy"
                       value={formData.content_hy}
-                      onChange={(event) => setFormData({ ...formData, content_hy: event.target.value })}
-                      rows={10}
+                      onChange={(value) => setFormData({ ...formData, content_hy: value })}
                       placeholder="Full blog content in Armenian..."
+                      minHeight={320}
                     />
                   </div>
                 </AdminFormSection>

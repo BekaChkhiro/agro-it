@@ -10,9 +10,10 @@ interface RichTextEditorProps {
   placeholder?: string;
   className?: string;
   id?: string;
+  minHeight?: number;
 }
 
-export function RichTextEditor({ value, onChange, placeholder, className, id }: RichTextEditorProps) {
+export function RichTextEditor({ value, onChange, placeholder, className, id, minHeight = 200 }: RichTextEditorProps) {
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
@@ -40,11 +41,11 @@ export function RichTextEditor({ value, onChange, placeholder, className, id }: 
     <div className={cn("rich-text-editor-wrapper", className)} id={id}>
       <style>{`
         .rich-text-editor-wrapper .ql-container {
-          min-height: 200px;
+          min-height: ${minHeight}px;
           font-size: 14px;
         }
         .rich-text-editor-wrapper .ql-editor {
-          min-height: 200px;
+          min-height: ${minHeight}px;
         }
         .rich-text-editor-wrapper .ql-toolbar {
           border-top-left-radius: 0.375rem;
