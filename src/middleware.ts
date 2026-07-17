@@ -156,8 +156,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl, 308);
   }
 
+  // Forward the resolved pathname to Server Components (root layout) so
+  // <html lang> can be derived from the URL path (e.g. /en/* → "en"),
+  // not just the domain. Prevents hreflang/HTML-lang mismatch on English pages.
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname);
+
   // Set domain language cookie for client-side hydration
-  const response = NextResponse.next();
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.cookies.set("x-domain-lang", domainLang, {
     path: "/",
     httpOnly: false,

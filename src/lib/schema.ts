@@ -37,7 +37,7 @@ export function generateOrganizationSchema(language: Language = "ka") {
     },
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+995-XXX-XXX-XXX",
+      telephone: "+995568846024",
       contactType: "customer service",
       availableLanguage: ["Georgian", "English", "Armenian"],
     },
@@ -191,7 +191,7 @@ export function generateLocalBusinessSchema(language: Language = "ka") {
       ? "AGROIT"
       : "Official distributor of Italian agricultural equipment in Georgia",
     url: baseUrl,
-    telephone: "+995-XXX-XXX-XXX",
+    telephone: "+995568846024",
     address: {
       "@type": "PostalAddress",
       streetAddress: language === "ka" ? "თბილისი" : "Tbilisi",
