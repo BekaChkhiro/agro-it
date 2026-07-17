@@ -9,7 +9,7 @@ import ProductCard from "@/components/ProductCard";
 import { getCategoryPath, getProductPath, getCanonicalUrl } from "@/utils/urlHelpers";
 import type { Json } from "@/integrations/supabase/types";
 import QuoteRequestDialog from "@/components/QuoteRequestDialog";
-import DOMPurify from "dompurify";
+import { sanitizeHtml } from "@/utils/sanitizeHtml";
 import type { ProductWithCategory, Language } from "@/lib/data/types";
 import { getLocalizedField } from "@/utils/languageFields";
 
@@ -347,7 +347,7 @@ const ProductContent = ({ product, relatedProducts, language }: ProductContentPr
                   {productDescription && (
                     <div
                       className="mt-4 text-base text-muted-foreground md:text-lg prose prose-sm max-w-none prose-p:text-muted-foreground prose-p:mb-4 prose-ul:text-muted-foreground prose-ul:mb-4 prose-ol:text-muted-foreground prose-ol:mb-4 prose-li:mb-1 prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
-                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(productDescription) }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(productDescription) }}
                     />
                   )}
                 </div>
@@ -407,7 +407,7 @@ const ProductContent = ({ product, relatedProducts, language }: ProductContentPr
                   </h2>
                   <div
                     className="prose prose-sm max-w-none text-muted-foreground prose-p:text-muted-foreground prose-p:mb-4 prose-ul:text-muted-foreground prose-ul:mb-4 prose-ol:text-muted-foreground prose-ol:mb-4 prose-li:mb-1 prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
-                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(additionalInfo!) }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(additionalInfo) }}
                   />
                 </CardContent>
               </Card>
@@ -441,7 +441,7 @@ const ProductContent = ({ product, relatedProducts, language }: ProductContentPr
                         <h3 className="text-lg font-semibold text-foreground">{item.title}</h3>
                         <div
                           className="mt-1 text-sm text-muted-foreground prose prose-sm max-w-none prose-p:text-muted-foreground prose-p:mb-2 prose-ul:text-muted-foreground prose-ul:mb-2 prose-ol:text-muted-foreground prose-ol:mb-2 prose-li:mb-1 prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
-                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.description) }}
+                          dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.description) }}
                         />
                       </div>
                     </div>
